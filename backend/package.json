@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "engines": {
-    "node": "18.x"  // Updated Node.js version
+    "node": "18.x"  
   },
   "dependencies": {
     "chromedriver": "^119.0.0",
