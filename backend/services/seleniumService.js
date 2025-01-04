@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 
 export default class SeleniumService {
   constructor() {
-    this.chromedriverPath = process.env.CHROMEDRIVER_PATH || "./chromedriver.exe";
+    this.chromedriverPath = process.env.CHROMEDRIVER_PATH || "./chromedriver";
   }
 
   async waitForElement(driver, selector, timeout = 10000) {

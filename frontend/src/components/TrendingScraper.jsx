@@ -18,7 +18,9 @@ const TrendingScraper = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.post("http://localhost:5000/api/scrape");
+      const response = await axios.post(
+        "https://scraper-iyve.onrender.com/api/scrape"
+      );
       console.log("Backend response:", response.data);
 
       const formattedData = {
