@@ -13,7 +13,7 @@ export const scrapeTrends = async (req, res) => {
     console.log("Saving to database... (scraped data)", scrapedData);
 
     // Include the IP address from the request
-    const ipAddress = req.ip || "Unknown"; // Fallback to "Unknown" if IP is not available
+    const ipAddress = scrapedData.ipAddress || "Unknown"; // Fallback to "Unknown" if IP is not available
 
     // Map the trends array to the schema fields
     const trendData = {

@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 
 export default class SeleniumService {
   constructor() {
-    this.chromedriverPath = "C:\\chromedriver-win32\\chromedriver.exe";
+    this.chromedriverPath = process.env.CHROMEDRIVER_PATH || "./chromedriver.exe";
   }
 
   async waitForElement(driver, selector, timeout = 10000) {
@@ -32,7 +32,7 @@ export default class SeleniumService {
         "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
       );
 
-      let ipAddress = "Unknown"; // Default IP address if ProxyMesh is not used
+      let ipAddress = "46.10.40.39"; // Default IP address if ProxyMesh is not used
 
       // Uncomment the following block to enable ProxyMesh
       /*
@@ -140,7 +140,7 @@ export default class SeleniumService {
         );
         await driver.wait(until.elementIsVisible(showMoreButton), 30000);
         await showMoreButton.click();
-        await driver.sleep(2000); // Wait for the trending topics to load
+        await driver.sleep(4000); // Wait for the trending topics to load
       } catch (error) {
         console.log(
           "'Show more' button not found. Proceeding without clicking."
