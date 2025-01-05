@@ -1,13 +1,13 @@
 import { Builder, By, until } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome.js";
-import { ServiceBuilder } from "selenium-webdriver/chrome.js";
 import { v4 as uuidv4 } from "uuid";
 // Uncomment the following line if using ProxyMesh
 // import ProxyChain from "proxy-chain";
 
 export default class SeleniumService {
   constructor() {
-    this.chromedriverPath = process.env.CHROMEDRIVER_PATH || "./chromedriver";
+    // Update the chromedriverPath to point to the Linux ChromeDriver executable
+    this.chromedriverPath = process.env.CHROMEDRIVER_PATH || "/usr/local/bin/chromedriver";
   }
 
   async waitForElement(driver, selector, timeout = 10000) {
@@ -45,11 +45,10 @@ export default class SeleniumService {
       console.log("ProxyMesh IP Address:", ipAddress);
       */
 
-      const service = new ServiceBuilder(this.chromedriverPath);
+      // Initialize the WebDriver without ServiceBuilder
       driver = await new Builder()
         .forBrowser("chrome")
         .setChromeOptions(options)
-        .setChromeService(service)
         .build();
 
       console.log("Starting login process...");
