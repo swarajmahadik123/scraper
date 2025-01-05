@@ -3,9 +3,9 @@
 # Create a directory for Chrome and ChromeDriver
 mkdir -p chrome-driver
 
-# Using a more recent Chrome version that's available
-CHROME_VERSION="120.0.6099.109"
-CHROME_URL="https://storage.googleapis.com/chrome-for-testing-public/chrome/linux64/${CHROME_VERSION}/chrome-linux64.zip"
+# Using the latest Chrome version
+CHROME_VERSION="131.0.6778.204"
+CHROME_URL="https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/linux64/chrome-linux64.zip"
 
 echo "Downloading Chrome version: $CHROME_VERSION"
 wget -O chrome-linux.zip "$CHROME_URL"
@@ -19,7 +19,7 @@ if [ $? -eq 0 ]; then
     export PATH=$PATH:$(pwd)/chrome-driver/chrome-linux64
     
     # Download and install ChromeDriver
-    CHROME_DRIVER_URL="https://storage.googleapis.com/chrome-for-testing-public/chromedriver/linux64/${CHROME_VERSION}/chromedriver-linux64.zip"
+    CHROME_DRIVER_URL="https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/linux64/chromedriver-linux64.zip"
     
     echo "Installing ChromeDriver version: $CHROME_VERSION"
     wget -O chromedriver-linux64.zip "$CHROME_DRIVER_URL"
