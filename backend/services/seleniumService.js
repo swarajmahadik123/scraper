@@ -5,7 +5,7 @@ import fs from "fs";
 
 export default class SeleniumService {
   constructor() {
-    this.chromedriverPath = process.env.CHROMEDRIVER_PATH || "/usr/local/bin/chromedriver";
+    this.chromedriverPath = process.env.CHROMEDRIVER_PATH || "/opt/render/project/src/backend/chrome-driver/chromedriver-linux64/chromedriver";
   }
 
   async waitForElement(driver, selector, timeout = 10000) {
