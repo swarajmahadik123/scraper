@@ -5,15 +5,15 @@ mkdir -p chrome-driver
 
 # Download and install Google Chrome version 114.0.5735.90 (precompiled version)
 CHROME_VERSION="114.0.5735.90"
-CHROME_URL="https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Linux_x64%2F${CHROME_VERSION}%2Fchrome-linux.zip?alt=media"
+CHROME_URL="https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/${CHROME_VERSION}/linux64/chrome-linux64.zip"
 wget -O chrome-linux.zip $CHROME_URL
 unzip chrome-linux.zip -d chrome-driver
-chmod +x chrome-driver/chrome-linux/chrome
-export PATH=$PATH:$(pwd)/chrome-driver/chrome-linux
+chmod +x chrome-driver/chrome-linux64/chrome
+export PATH=$PATH:$(pwd)/chrome-driver/chrome-linux64
 
 # Hardcoded ChromeDriver version and URL for version 114.0.5735.90
 CHROME_DRIVER_VERSION="114.0.5735.90"
-CHROME_DRIVER_URL="https://storage.googleapis.com/chrome-for-testing-public/$CHROME_DRIVER_VERSION/linux64/chromedriver-linux64.zip"
+CHROME_DRIVER_URL="https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/${CHROME_DRIVER_VERSION}/linux64/chromedriver-linux64.zip"
 
 echo "Installing ChromeDriver version: $CHROME_DRIVER_VERSION"
 
