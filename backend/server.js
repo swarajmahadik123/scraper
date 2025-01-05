@@ -8,25 +8,49 @@ import apiRoutes from "./routes/api.js";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000; // Use PORT from .env or default to 5000
+const PORT = process.env.PORT || 5000;
 
 // Connect to the database
 connectDB();
 
-// CORS Configuration to allow all origins
+// CORS Configuration
 const corsOptions = {
-  origin: "*", // Allow requests from any origin
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // Allowed HTTP methods
-  credentials: false, // Disable credentials (cookies, authorization headers)
-  optionsSuccessStatus: 204, // Respond with 204 No Content for preflight requests
+  origin: ["http://localhost:3000", "https://your-frontend-domain.com"], // Add your frontend domain
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+  optionsSuccessStatus: 200
 };
 
 // Middleware
-app.use(cors(corsOptions)); // Use the CORS configuration
-app.use(express.json());
+app.use(cors(corsOptions));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+// Health check route
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
 
 // Routes
 app.use("/api", apiRoutes);
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ 
+    error: "Something went wrong!",
+    message: err.message 
+  });
+});
+
+// Handle 404 routes
+app.use((req, res) => {
+  res.status(404).json({ 
+    error: "Not Found",
+    message: "The requested resource was not found" 
+  });
+});
 
 // Start the server
 app.listen(PORT, () => {
