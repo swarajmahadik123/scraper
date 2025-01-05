@@ -13,8 +13,16 @@ const PORT = process.env.PORT || 5000; // Use PORT from .env or default to 5000
 // Connect to the database
 connectDB();
 
+// CORS Configuration to allow all origins
+const corsOptions = {
+  origin: "*", // Allow requests from any origin
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // Allowed HTTP methods
+  credentials: false, // Disable credentials (cookies, authorization headers)
+  optionsSuccessStatus: 204, // Respond with 204 No Content for preflight requests
+};
+
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions)); // Use the CORS configuration
 app.use(express.json());
 
 // Routes
