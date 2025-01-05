@@ -39,8 +39,8 @@ if [ $? -eq 0 ]; then
         echo "Updated PATH: $PATH"
         
         # Get Chrome and ChromeDriver versions
-        CHROME_VERSION_ACTUAL=$(chrome-driver/chrome-linux64/chrome --version | awk '{print $3}')
-        CHROME_DRIVER_VERSION_ACTUAL=$(chrome-driver/chromedriver-linux64/chromedriver --version | awk '{print $2}')
+        CHROME_VERSION_ACTUAL=$(chrome-driver/chrome-linux64/chrome --version | grep -oP '\d+\.\d+\.\d+\.\d+')
+        CHROME_DRIVER_VERSION_ACTUAL=$(chrome-driver/chromedriver-linux64/chromedriver --version | grep -oP '\d+\.\d+\.\d+\.\d+')
         
         echo "Google Chrome version: $CHROME_VERSION_ACTUAL"
         echo "ChromeDriver version: $CHROME_DRIVER_VERSION_ACTUAL"
