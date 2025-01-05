@@ -1,12 +1,10 @@
 import { Builder, By, until } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome.js";
 import { v4 as uuidv4 } from "uuid";
-// Uncomment the following line if using ProxyMesh
-// import ProxyChain from "proxy-chain";
+import fs from "fs";
 
 export default class SeleniumService {
   constructor() {
-    // Update the chromedriverPath to point to the Linux ChromeDriver executable
     this.chromedriverPath = process.env.CHROMEDRIVER_PATH || "/usr/local/bin/chromedriver";
   }
 
@@ -29,23 +27,33 @@ export default class SeleniumService {
         "--window-size=1920,1080",
         "--disable-gpu",
         "--headless=new",
-        "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        "--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "--disable-software-rasterizer",
+        "--disable-extensions",
+        "--disable-background-networking",
+        "--disable-background-timer-throttling",
+        "--disable-backgrounding-occluded-windows",
+        "--disable-breakpad",
+        "--disable-component-update",
+        "--disable-domain-reliability",
+        "--disable-features=AudioServiceOutOfProcess",
+        "--disable-hang-monitor",
+        "--disable-ipc-flooding-protection",
+        "--disable-popup-blocking",
+        "--disable-prompt-on-repost",
+        "--disable-renderer-backgrounding",
+        "--disable-sync",
+        "--force-color-profile=srgb",
+        "--metrics-recording-only",
+        "--no-first-run",
+        "--safebrowsing-disable-auto-update",
+        "--enable-automation",
+        "--password-store=basic",
+        "--use-mock-keychain"
       );
 
       let ipAddress = "46.10.40.39"; // Default IP address if ProxyMesh is not used
 
-      // Uncomment the following block to enable ProxyMesh
-      /*
-      const proxyUrl = "http://username:password@proxy.proxymesh.com:31280"; // Replace with your ProxyMesh credentials
-      const newProxyUrl = await ProxyChain.anonymizeProxy(proxyUrl); // Anonymize the proxy URL
-      options.addArguments(`--proxy-server=${newProxyUrl}`); // Set the proxy server
-
-      // Extract the IP address from the proxy URL
-      ipAddress = newProxyUrl.split("@")[1].split(":")[0];
-      console.log("ProxyMesh IP Address:", ipAddress);
-      */
-
-      // Initialize the WebDriver without ServiceBuilder
       driver = await new Builder()
         .forBrowser("chrome")
         .setChromeOptions(options)
@@ -53,7 +61,6 @@ export default class SeleniumService {
 
       console.log("Starting login process...");
       await driver.get("https://twitter.com/i/flow/login");
-      await driver.sleep(10000); // Wait for the page to load
 
       // Try multiple selectors for username input
       const usernameSelectors = [
@@ -67,10 +74,7 @@ export default class SeleniumService {
       for (const selector of usernameSelectors) {
         try {
           console.log(`Trying username selector: ${selector}`);
-          usernameInput = await driver.wait(
-            until.elementLocated(selector),
-            10000
-          );
+          usernameInput = await driver.wait(until.elementLocated(selector), 10000);
           if (usernameInput) {
             console.log(`Found username input with selector: ${selector}`);
             break;
@@ -81,44 +85,31 @@ export default class SeleniumService {
       }
 
       if (!usernameInput) {
-        throw new Error(
-          "Could not find username input with any known selector"
-        );
+        throw new Error("Could not find username input with any known selector");
       }
 
-      await usernameInput.sendKeys(`${process.env.TWITTER_USERNAME}`); // Replace with your Twitter username
+      await usernameInput.sendKeys(`${process.env.TWITTER_USERNAME}`);
       await driver.sleep(1000);
 
       // Find and click next button
       console.log("Looking for next button...");
       const nextButtonSelector = By.xpath('//button//span[text()="Next"]');
-      const nextButton = await driver.wait(
-        until.elementLocated(nextButtonSelector),
-        30000
-      );
+      const nextButton = await driver.wait(until.elementLocated(nextButtonSelector), 30000);
       await driver.wait(until.elementIsVisible(nextButton), 30000);
       await nextButton.click();
       await driver.sleep(2000);
 
       // Handle password input
       console.log("Looking for password input...");
-      const passwordInput = await driver.wait(
-        until.elementLocated(By.css('input[type="password"]')),
-        30000
-      );
+      const passwordInput = await driver.wait(until.elementLocated(By.css('input[type="password"]')), 30000);
       await driver.wait(until.elementIsVisible(passwordInput), 30000);
-      await passwordInput.sendKeys(`${process.env.TWITTER_PASSWORD}`); // Twitter password
+      await passwordInput.sendKeys(`${process.env.TWITTER_PASSWORD}`);
       await driver.sleep(1000);
 
       // Click login button
       console.log("Looking for login button...");
-      const loginButtonSelector = By.css(
-        'button[data-testid="LoginForm_Login_Button"]'
-      );
-      const loginButton = await driver.wait(
-        until.elementLocated(loginButtonSelector),
-        30000
-      );
+      const loginButtonSelector = By.css('button[data-testid="LoginForm_Login_Button"]');
+      const loginButton = await driver.wait(until.elementLocated(loginButtonSelector), 30000);
       await driver.wait(until.elementIsVisible(loginButton), 30000);
       await loginButton.click();
       await driver.sleep(5000);
@@ -126,32 +117,22 @@ export default class SeleniumService {
       // Navigate to home page
       console.log("Navigating to home page...");
       await driver.get("https://twitter.com/home");
-      await driver.sleep(5000); // Wait for the page to load
+      await driver.sleep(5000);
 
       // Check for "Show more" button and click it
       console.log("Looking for 'Show more' button...");
       try {
-        const showMoreButton = await driver.wait(
-          until.elementLocated(
-            By.xpath('//span[contains(text(), "Show more")]')
-          ),
-          30000
-        );
+        const showMoreButton = await driver.wait(until.elementLocated(By.xpath('//span[contains(text(), "Show more")]')), 30000);
         await driver.wait(until.elementIsVisible(showMoreButton), 30000);
         await showMoreButton.click();
-        await driver.sleep(4000); // Wait for the trending topics to load
+        await driver.sleep(4000);
       } catch (error) {
-        console.log(
-          "'Show more' button not found. Proceeding without clicking."
-        );
+        console.log("'Show more' button not found. Proceeding without clicking.");
       }
 
       // Get trending topics
       console.log("Looking for trending topics...");
-      const trendElements = await driver.wait(
-        until.elementsLocated(By.css('[data-testid="trend"]')),
-        30000
-      );
+      const trendElements = await driver.wait(until.elementsLocated(By.css('[data-testid="trend"]')), 30000);
 
       // Fetch up to 10 trending topics
       const trends = [];
@@ -179,13 +160,21 @@ export default class SeleniumService {
 
       return {
         runId: uuidv4(),
-        trends: top5Trends, // Return only the top 5 trends
-        allTrends: trends, // Optional: Return all fetched trends for debugging
+        trends: top5Trends,
+        allTrends: trends,
         timestamp: new Date(),
-        ipAddress: ipAddress, // Include the IP address in the response
+        ipAddress: ipAddress,
       };
     } catch (error) {
       console.error("Selenium Error:", error);
+
+      // Log page source and take a screenshot
+      const pageSource = await driver.getPageSource();
+      fs.writeFileSync("page_source.html", pageSource);
+
+      const screenshot = await driver.takeScreenshot();
+      fs.writeFileSync("screenshot.png", screenshot, "base64");
+
       throw error;
     } finally {
       if (driver) {
