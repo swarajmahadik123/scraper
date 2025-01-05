@@ -37,12 +37,27 @@ if [ $? -eq 0 ]; then
         
         # Verify installations
         echo "Updated PATH: $PATH"
-        echo "Google Chrome version: $(chrome --version)"
-        echo "ChromeDriver version: $(chromedriver --version)"
         
-        # Additional checks
-        echo "Chrome binary path: $(which chrome)"
-        echo "ChromeDriver binary path: $(which chromedriver)"
+        # Get Chrome and ChromeDriver versions
+        CHROME_VERSION_ACTUAL=$(chrome-driver/chrome-linux64/chrome --version | awk '{print $3}')
+        CHROME_DRIVER_VERSION_ACTUAL=$(chrome-driver/chromedriver-linux64/chromedriver --version | awk '{print $2}')
+        
+        echo "Google Chrome version: $CHROME_VERSION_ACTUAL"
+        echo "ChromeDriver version: $CHROME_DRIVER_VERSION_ACTUAL"
+        
+        # Cross-check versions
+        if [ "$CHROME_VERSION_ACTUAL" != "$CHROME_DRIVER_VERSION_ACTUAL" ]; then
+            echo "Version mismatch: Chrome ($CHROME_VERSION_ACTUAL) and ChromeDriver ($CHROME_DRIVER_VERSION_ACTUAL) versions do not match."
+            exit 1
+        else
+            echo "Chrome and ChromeDriver versions match: $CHROME_VERSION_ACTUAL"
+        fi
+        
+        # Output ChromeDriver path for environment variable
+        CHROME_DRIVER_PATH="$(pwd)/chrome-driver/chromedriver-linux64/chromedriver"
+        echo "ChromeDriver path: $CHROME_DRIVER_PATH"
+        echo "Add the following to your environment variables:"
+        echo "export CHROMEDRIVER_PATH=$CHROME_DRIVER_PATH"
     else
         echo "Failed to download ChromeDriver. Please check the version number and URL."
         exit 1
