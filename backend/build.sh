@@ -39,6 +39,10 @@ if [ $? -eq 0 ]; then
         echo "Updated PATH: $PATH"
         echo "Google Chrome version: $(chrome --version)"
         echo "ChromeDriver version: $(chromedriver --version)"
+        
+        # Additional checks
+        echo "Chrome binary path: $(which chrome)"
+        echo "ChromeDriver binary path: $(which chromedriver)"
     else
         echo "Failed to download ChromeDriver. Please check the version number and URL."
         exit 1
