@@ -4,7 +4,6 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import apiRoutes from "./routes/api.js";
 
-// Load environment variables from .env file
 dotenv.config();
 
 const app = express();
@@ -13,46 +12,52 @@ const PORT = process.env.PORT || 5000;
 // Connect to the database
 connectDB();
 
-// CORS Configuration
-const corsOptions = {
-  origin: ["http://localhost:3000", "https://your-frontend-domain.com"], // Add your frontend domain
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true,
-  optionsSuccessStatus: 200
-};
+// CORS middleware with specific configuration
+app.use(cors({
+  origin: ['http://localhost:3000', 'https://your-production-domain.com'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Accept'],
+  credentials: false
+}));
 
-// Middleware
-app.use(cors(corsOptions));
+// Add CORS headers explicitly
+app.use((req, res, next) => {
+  const allowedOrigins = ['http://localhost:3000', 'https://your-production-domain.com'];
+  const origin = req.headers.origin;
+  
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+  
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Accept');
+  next();
+});
+
+// Body parser middleware
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// Health check route
-app.get("/health", (req, res) => {
-  res.status(200).json({ status: "ok" });
+// Debug middleware
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  console.log('Origin:', req.headers.origin);
+  console.log('Headers:', req.headers);
+  next();
 });
 
 // Routes
 app.use("/api", apiRoutes);
 
-// Error handling middleware
+// Error handling
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ 
-    error: "Something went wrong!",
-    message: err.message 
+  console.error('Server Error:', err);
+  res.status(500).json({
+    error: true,
+    message: err.message || 'Internal server error'
   });
 });
 
-// Handle 404 routes
-app.use((req, res) => {
-  res.status(404).json({ 
-    error: "Not Found",
-    message: "The requested resource was not found" 
-  });
-});
-
-// Start the server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
